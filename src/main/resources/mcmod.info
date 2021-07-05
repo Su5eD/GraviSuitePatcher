@@ -1,0 +1,16 @@
+[
+{
+  "modid": "gravisuitepatch",
+  "name": "Gravitation Suite Patcher",
+  "description": "Fixes several issues in Gravitation Suite",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["Su5eD"],
+  "credits": "Su5eD",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
