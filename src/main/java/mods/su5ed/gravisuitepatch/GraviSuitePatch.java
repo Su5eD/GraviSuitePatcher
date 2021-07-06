@@ -5,7 +5,7 @@ import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
-@Mod(modid = GraviSuitePatch.MODID)
+@Mod(modid = GraviSuitePatch.MODID, dependencies = "required-after:gravisuite@[3.1.1,];")
 public class GraviSuitePatch {
     public static final String MODID = "gravisuitepatch";
 

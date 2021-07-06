@@ -14,7 +14,7 @@ plugins {
 java.toolchain.languageVersion.set(JavaLanguageVersion.of(8))
 idea.module.inheritOutputDirs = true
 
-version = "1.0"
+version = "1.0.0"
 group = "mods.su5ed"
 
 val coremodPath: String by project
