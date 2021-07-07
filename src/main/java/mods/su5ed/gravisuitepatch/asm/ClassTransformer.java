@@ -14,13 +14,14 @@ public class ClassTransformer implements IClassTransformer {
     
     static {
         TRANSFORMERS.put("com.chocohead.gravisuite.items.ItemAdvancedDrill", ItemAdvancedDrillVisitor::new);
+        TRANSFORMERS.put("com.chocohead.gravisuite.Recipes", RecipesVisitor::new);
     }
     
     @Override
     public byte[] transform(String name, String transformedName, byte[] bytes) {
         if (TRANSFORMERS.containsKey(name)) {
             ClassReader reader = new ClassReader(bytes);
-            ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_FRAMES);
+            ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
             
             reader.accept(TRANSFORMERS.get(name).apply(ASM4, writer), 0);
             
@@ -97,6 +98,70 @@ public class ClassTransformer implements IClassTransformer {
                 visitLabel(label);
                 
                 super.visitCode();
+            }
+        }
+    }
+    
+    private static class RecipesVisitor extends ClassVisitor {
+        
+        public RecipesVisitor(int api, ClassVisitor cv) {
+            super(api, cv);
+        }
+
+        @Override
+        public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
+            if (name.equals("addCraftingRecipes") && desc.equals("()V")) return new AddCraftingRecipesVisitor(ASM4, super.visitMethod(access, name, desc, signature, exceptions)); 
+            return super.visitMethod(access, name, desc, signature, exceptions);
+        }
+        
+        private static class AddCraftingRecipesVisitor extends MethodVisitor {
+            private boolean foundEntryPoint;
+            private boolean inject;
+            private boolean injected;
+            private final Label label = new Label();
+
+            public AddCraftingRecipesVisitor(int api, MethodVisitor mv) {
+                super(api, mv);
+            }
+
+            @Override
+            public void visitFieldInsn(int opcode, String owner, String name, String desc) {
+                if (opcode == GETSTATIC && owner.equals("com/chocohead/gravisuite/Config") && name.equals("canCraftUltiLappack") && desc.equals("Z")) {
+                    this.foundEntryPoint = true;
+                }
+                
+                super.visitFieldInsn(opcode, owner, name, desc);
+            }
+
+            @Override
+            public void visitJumpInsn(int opcode, Label label) {
+                if (opcode == IFEQ && this.foundEntryPoint) {
+                    this.inject = true;
+                }
+                
+                super.visitJumpInsn(opcode, label);
+            }
+            
+            @Override
+            public void visitTypeInsn(int opcode, String type) {
+                if (opcode == NEW && type.equals("net/minecraft/item/ItemStack") && this.inject) {
+                    if (!this.injected) {
+                        visitFieldInsn(GETSTATIC, "ic2/core/IC2", "version", "Lic2/core/profile/Version;");
+                        visitMethodInsn(INVOKEVIRTUAL, "ic2/core/profile/Version", "isClassic", "()Z", false);
+                        visitJumpInsn(IFEQ, this.label);
+                                            
+                        super.visitTypeInsn(opcode, type);
+                        this.injected = true;
+                        return;
+                    }
+                    else {
+                        this.foundEntryPoint = this.inject = this.injected = false;
+                        visitLabel(this.label);
+                        visitFrame(F_SAME, 0, null, 0, null);
+                    }
+                }
+                            
+                super.visitTypeInsn(opcode, type);
             }
         }
     }
