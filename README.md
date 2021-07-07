@@ -2,7 +2,7 @@
 
 Fixes several issues in Gravitation Suite
 
-## Fixes Issues
+## Fixed Issues
 
 - The Advanced Drill [crashes](https://pastebin.com/HjFY2MHH) the game when used in a Miner.  
   Cause: Missing required override of methods `ItemDrill#energyUse`, `ItemDrill#breakTime` and `ItemDrill#breakBlock`.
