@@ -18,7 +18,7 @@ public class PatcherPlugin implements IFMLLoadingPlugin {
 
     @Override
     public String getModContainerClass() {
-        return PluginModContainer.class.getName();
+        return null;
     }
 
     @Nullable

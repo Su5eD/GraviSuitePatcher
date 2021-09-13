@@ -1,18 +1,17 @@
 import net.minecraftforge.gradle.common.util.RunConfig
-import wtf.gofancy.fancygradle.patch.Patch
 import wtf.gofancy.fancygradle.script.extensions.curse
+import wtf.gofancy.fancygradle.script.extensions.curseForge
 import wtf.gofancy.fancygradle.script.extensions.deobf
 import java.time.LocalDateTime
 
 plugins {
     java
     idea
-    id("net.minecraftforge.gradle") version "5.0.+"
-    id("wtf.gofancy.fancygradle") version "1.0.1"
+    id("net.minecraftforge.gradle") version "5.1.+"
+    id("wtf.gofancy.fancygradle") version "1.1.0-0"
 }
 
 java.toolchain.languageVersion.set(JavaLanguageVersion.of(8))
-idea.module.inheritOutputDirs = true
 
 version = "1.0.0"
 group = "mods.su5ed"
@@ -42,7 +41,10 @@ minecraft {
 
 fancyGradle {
     patches {
-        patch(Patch.RESOURCES, Patch.COREMODS, Patch.ASM)
+        resources
+        coremods
+        codeChickenLib
+        asm
     }
 }
 
@@ -68,7 +70,7 @@ tasks {
     jar {
         manifest { 
             attributes(
-                "Specification-Title" to "advmachinespatch",
+                "Specification-Title" to "gravisuitespatch",
                 "Specification-Vendor" to "su5ed",
                 "Specification-Version" to "1",
                 "Implementation-Title" to project.name,
