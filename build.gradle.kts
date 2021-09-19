@@ -1,6 +1,5 @@
 import net.minecraftforge.gradle.common.util.RunConfig
 import wtf.gofancy.fancygradle.script.extensions.curse
-import wtf.gofancy.fancygradle.script.extensions.curseForge
 import wtf.gofancy.fancygradle.script.extensions.deobf
 import java.time.LocalDateTime
 
@@ -16,8 +15,6 @@ java.toolchain.languageVersion.set(JavaLanguageVersion.of(8))
 version = "1.0.0"
 group = "mods.su5ed"
 
-val coremodPath: String by project
-
 minecraft {
     mappings("stable", "39-1.12")
 
@@ -31,7 +28,6 @@ minecraft {
             )
             workingDirectory = project.file("run").canonicalPath
             source(sourceSets["main"])
-            jvmArgs.add("-Dfml.coreMods.load=$coremodPath")
         }
 
         create("client", config)
@@ -57,11 +53,16 @@ repositories {
         name = "IC2"
         url = uri("https://maven.ic2.player.to/")
     }
+    maven("https://su5ed.jfrog.io/artifactory/maven")
+    mavenLocal()
 }
 
 dependencies {
     minecraft(group = "net.minecraftforge", name = "forge", version = "1.12.2-14.23.5.2855")
     
+    implementation("dev.su5ed.koremods:script:0.0.19")
+    implementation("dev.su5ed.koremods:launchwrapper:0.0.19")
+    implementation(group = "codes.som.anthony", name = "koffee", version = "8.0.4-legacy")
     implementation(fg.deobf(group = "net.industrial-craft", name = "industrialcraft-2", version = "2.8.220-ex112"))
     implementation(fg.deobf(curse(mod = "gravitation-suite", projectId = 253590, fileId = 2700845)))
 }
@@ -76,20 +77,7 @@ tasks {
                 "Implementation-Title" to project.name,
                 "Implementation-Version" to project.version,
                 "Implementation-Vendor" to "su5ed",
-                "Implementation-Timestamp" to LocalDateTime.now(),
-                "FMLCorePlugin" to coremodPath,
-                "FMLCorePluginContainsFMLMod" to true,
-            )
-        }
-    }
-
-    processResources {
-        inputs.property("version", project.version)
-        
-        filesMatching("mcmod.info") {
-            expand(
-                "version" to project.version,
-                "mcversion" to "1.12.2"
+                "Implementation-Timestamp" to LocalDateTime.now()
             )
         }
     }
