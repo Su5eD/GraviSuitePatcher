@@ -60,9 +60,9 @@ repositories {
 dependencies {
     minecraft(group = "net.minecraftforge", name = "forge", version = "1.12.2-14.23.5.2855")
     
-    implementation("dev.su5ed.koremods:script:0.0.19")
-    implementation("dev.su5ed.koremods:launchwrapper:0.0.19")
-    implementation(group = "codes.som.anthony", name = "koffee", version = "8.0.4-legacy")
+    implementation("dev.su5ed.koremods:script:0.0.21")
+    implementation("dev.su5ed.koremods:launchwrapper:0.0.21")
+    implementation(group = "codes.som.anthony", name = "koffee", version = "8.0.5-legacy")
     implementation(fg.deobf(group = "net.industrial-craft", name = "industrialcraft-2", version = "2.8.220-ex112"))
     implementation(fg.deobf(curse(mod = "gravitation-suite", projectId = 253590, fileId = 2700845)))
 }

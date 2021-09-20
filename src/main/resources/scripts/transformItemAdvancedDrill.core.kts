@@ -18,11 +18,12 @@ import org.objectweb.asm.tree.ClassNode
 import org.objectweb.asm.tree.MethodNode
 
 transformers {
-    `class`("com.chocohead.gravisuite.items.ItemAdvancedDrill", ::transformItemAdvancedDrill)
+    `class`("com.chocohead.gravisuite.items.ItemAdvancedDrill", block = ::transformItemAdvancedDrill)
     method(
         "com.chocohead.gravisuite.items.ItemAdvancedDrill",
         "getBrokenBlocks",
         constructMethodDescriptor(Collection::class, EntityPlayer::class, RayTraceResult::class),
+        true,
         ::transformBrokenBlocks
     )
 }
@@ -75,7 +76,6 @@ fun transformBrokenBlocks(node: MethodNode) {
             invokespecial(HashSet::class, "<init>", "()V")
             areturn
             label(label)
-            f_same
         }.first
 
         node.instructions.insert(node.instructions.first, insnlist)
