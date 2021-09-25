@@ -1,7 +1,7 @@
 @file:Allow("net.minecraft.", "mods.su5ed.gravisuitepatch.asm.")
 
 import codes.som.anthony.koffee.MethodAssembly
-import codes.som.anthony.koffee.assembleBlock
+import codes.som.anthony.koffee.insert
 import codes.som.anthony.koffee.insns.jvm.*
 import codes.som.anthony.koffee.koffee
 import codes.som.anthony.koffee.types.TypeLike
@@ -18,13 +18,13 @@ import org.objectweb.asm.tree.ClassNode
 import org.objectweb.asm.tree.MethodNode
 
 transformers {
-    `class`("com.chocohead.gravisuite.items.ItemAdvancedDrill", block = ::transformItemAdvancedDrill)
+    `class`("com.chocohead.gravisuite.items.ItemAdvancedDrill", ::transformItemAdvancedDrill)
     method(
         "com.chocohead.gravisuite.items.ItemAdvancedDrill",
         "getBrokenBlocks",
         constructMethodDescriptor(Collection::class, EntityPlayer::class, RayTraceResult::class),
-        true,
-        ::transformBrokenBlocks
+        ::transformBrokenBlocks,
+        true
     )
 }
 
@@ -66,18 +66,15 @@ fun MethodAssembly.generateHookMethod(name: String, returnType: TypeLike) {
 }
 
 fun transformBrokenBlocks(node: MethodNode) {
-    node.koffee {
-        val insnlist = assembleBlock {
-            val label = Label()
-            aload_1
-            ifnonnull(label)
-            new(HashSet::class)
-            dup
-            invokespecial(HashSet::class, "<init>", "()V")
-            areturn
-            label(label)
-        }.first
-
-        node.instructions.insert(node.instructions.first, insnlist)
+    node.insert { 
+        val label = Label()
+            
+        aload_1
+        ifnonnull(label)
+        new(HashSet::class)
+        dup
+        invokespecial(HashSet::class, "<init>", "()V")
+        areturn
+        label(label)
     }
 }
