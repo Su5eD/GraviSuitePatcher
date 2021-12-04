@@ -1,18 +1,10 @@
-@file:Allow("net.minecraft.", "mods.su5ed.gravisuitepatch.asm.")
-
 import codes.som.anthony.koffee.MethodAssembly
 import codes.som.anthony.koffee.insert
 import codes.som.anthony.koffee.insns.jvm.*
 import codes.som.anthony.koffee.koffee
 import codes.som.anthony.koffee.types.TypeLike
 import codes.som.anthony.koffee.util.constructMethodDescriptor
-import mods.su5ed.gravisuitepatch.asm.ASMHooks
-import net.minecraft.block.state.IBlockState
-import net.minecraft.entity.player.EntityPlayer
-import net.minecraft.item.ItemStack
-import net.minecraft.util.math.BlockPos
-import net.minecraft.util.math.RayTraceResult
-import net.minecraft.world.World
+import dev.su5ed.koremods.dsl.computeFrames
 import org.objectweb.asm.Label
 import org.objectweb.asm.tree.ClassNode
 import org.objectweb.asm.tree.MethodNode
@@ -22,11 +14,25 @@ transformers {
     method(
         "com.chocohead.gravisuite.items.ItemAdvancedDrill",
         "getBrokenBlocks",
-        constructMethodDescriptor(Collection::class, EntityPlayer::class, RayTraceResult::class),
-        ::transformBrokenBlocks,
-        true
+        constructMethodDescriptor(
+            Collection::class,
+            "net/minecraft/entity/player/EntityPlayer",
+            "net/minecraft/util/math/RayTraceResult"
+        ),
+        ::transformBrokenBlocks
     )
+    
+    ext { 
+        computeFrames = true
+    }
 }
+
+val hookArgs = arrayOf(
+    "net/minecraft/item/ItemStack",
+    "net/minecraft/world/World",
+    "net/minecraft/util/math/BlockPos",
+    "net/minecraft/block/state/IBlockState"
+)
 
 fun transformItemAdvancedDrill(node: ClassNode) {
     node.koffee {
@@ -34,34 +40,34 @@ fun transformItemAdvancedDrill(node: ClassNode) {
             public,
             "energyUse",
             int,
-            ItemStack::class, World::class, BlockPos::class, IBlockState::class,
+            *hookArgs,
             routine = { generateHookMethod("getAdvDrillEnergyUse", int) }
         )
         method(
             public,
             "breakTime",
             int,
-            ItemStack::class, World::class, BlockPos::class, IBlockState::class,
+            *hookArgs,
             routine = { generateHookMethod("getAdvDrillBreakTime", int) }
         )
         method(
             public,
             "breakBlock",
             boolean,
-            ItemStack::class, World::class, BlockPos::class, IBlockState::class,
+            *hookArgs,
             routine = { generateHookMethod("advDrillBreakBlock", boolean) }
         )
     }
 }
 
 fun MethodAssembly.generateHookMethod(name: String, returnType: TypeLike) {
-    val desc = constructMethodDescriptor(returnType, ItemStack::class, World::class, BlockPos::class, IBlockState::class)
+    val desc = constructMethodDescriptor(returnType, *hookArgs)
 
     aload_1
     aload_2
     aload_3
     aload(4)
-    invokestatic(ASMHooks::class, name, desc)
+    invokestatic("mods/su5ed/gravisuitepatch/asm/ASMHooks", name, desc)
     ireturn
 }
 
