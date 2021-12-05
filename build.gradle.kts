@@ -55,13 +55,16 @@ repositories {
         name = "Su5eD Artifactory"
         url = uri("https://su5ed.jfrog.io/artifactory/maven")
     }
-    mavenLocal()
+    maven {
+        name = "Koremods"
+        url = uri("https://gitlab.com/api/v4/projects/29540985/packages/maven")
+    }
 }
 
 dependencies {
     minecraft(group = "net.minecraftforge", name = "forge", version = "1.12.2-14.23.5.2855")
     
-    implementation("dev.su5ed.koremods:koremods-launchwrapper:0.0.47")
+    implementation("dev.su5ed.koremods:koremods-launchwrapper:0.1.0")
     implementation(fg.deobf(group = "net.industrial-craft", name = "industrialcraft-2", version = "2.8.220-ex112"))
     implementation(fg.deobf(curse(mod = "gravitation-suite", projectId = 253590, fileId = 2700845)))
 }
